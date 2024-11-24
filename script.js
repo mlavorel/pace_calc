@@ -115,14 +115,16 @@ function calculateFromInput(source) {
 
     // Cálculos interdependentes
     if (source === 'distancia' && distancia) {
-        if (tempoSec) {
-            paceSec = tempoSec / distancia;
-            paceInput.value = secondsToPace(paceSec);
-            velocidade = (distancia / (tempoSec / 3600)).toFixed(2).replace('.', ',');
-            velocidadeInput.value = velocidade;
-        } else if (paceSec) {
+        if (paceSec) {
+            // Preserve o pace e calcule o tempo
             tempoSec = paceSec * distancia;
             tempoInput.value = secondsToTime(tempoSec);
+            velocidade = (distancia / (tempoSec / 3600)).toFixed(2).replace('.', ',');
+            velocidadeInput.value = velocidade;
+        } else if (tempoSec) {
+            // Preserve o tempo e calcule o pace
+            paceSec = tempoSec / distancia;
+            paceInput.value = secondsToPace(paceSec);
             velocidade = (distancia / (tempoSec / 3600)).toFixed(2).replace('.', ',');
             velocidadeInput.value = velocidade;
         } else if (velocidade) {
