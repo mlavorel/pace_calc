@@ -47,8 +47,13 @@ function maskPaceInput(e) {
     let value = e.target.value.replace(/\D/g, '');
     if (value.length > 4) value = value.slice(0, 4);
     let formatted = '';
-    if (value.length > 0) formatted += value.slice(0, 2);
-    if (value.length > 2) formatted += ':' + value.slice(2, 4);
+    if (value.length === 3) {
+        // Caso tenha 3 dígitos, formate como "m:ss"
+        formatted = `${value[0]}:${value.slice(1, 3)}`;
+        } else if (value.length === 4) {
+        // Caso tenha 4 dígitos, formate como "mm:ss"
+        formatted = `${value.slice(0, 2)}:${value.slice(2, 4)}`;
+    }
     e.target.value = formatted;
 }
 
@@ -151,7 +156,12 @@ function calculateFromInput(source) {
 
 // Validação e Formatação Inicial
 function initialize() {
-    // Definir máscaras iniciais se necessário
+    // Definir valores padrão
+    distanciaInput.value = "21";
+    paceInput.value = "5:00";
+
+    // Calcular tempo e velocidade a partir dos valores padrão
+    calculateFromInput('pace');
 }
 
 initialize();
