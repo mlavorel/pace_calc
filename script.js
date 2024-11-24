@@ -98,7 +98,12 @@ velocidadeInput.addEventListener('input', (e) => {
 // Botões de Distância Predefinida
 distButtons.forEach(button => {
     button.addEventListener('click', () => {
-        const distancia = parseFloat(button.getAttribute('data-distancia')).toFixed(4).replace('.', ',');
+        let distancia = parseFloat(button.getAttribute('data-distancia'));
+        if (Number.isInteger(distancia)) {
+            distancia = distancia.toString(); // Sem decimais para inteiros
+        } else {
+            distancia = distancia.toFixed(4).replace('.', ','); // Decimais para valores fracionários
+        }
         distanciaInput.value = distancia;
         calculateFromInput('distancia');
     });
