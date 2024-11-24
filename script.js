@@ -157,7 +157,7 @@ function calculateFromInput(source) {
 // Validação e Formatação Inicial
 function initialize() {
     // Definir valores padrão
-    distanciaInput.value = "21,0975";
+    distanciaInput.value = "10";
     paceInput.value = "5:00";
 
     // Calcular tempo e velocidade a partir dos valores padrão
