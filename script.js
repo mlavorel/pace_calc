@@ -45,6 +45,11 @@ function maskTimeInput(e) {
 
 function maskPaceInput(e) {
     let value = e.target.value.replace(/\D/g, '');
+    if (value.length < 3) {
+        // Se houver menos de 3 dígitos, não aplicar nenhuma formatação
+        e.target.value = value;
+        return;
+    }
     if (value.length > 4) value = value.slice(0, 4);
     let formatted = '';
     if (value.length === 3) {
