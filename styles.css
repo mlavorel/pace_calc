@@ -73,11 +73,12 @@ h1 {
 }
 
 input[type="text"] {
-    width: 70%; /* Redução de 30% */
+    font-size: 1.25rem;
+	width: 70%; /* Redução de 30% */
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 1rem;
+    //font-size: 1rem;
     transition: border-color 0.3s;
 }
 
