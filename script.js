@@ -44,22 +44,48 @@ function maskTimeInput(e) {
 }
 
 function maskPaceInput(e) {
-    let value = e.target.value.replace(/\D/g, '');
-    if (value.length < 3) {
-        // Se houver menos de 3 dígitos, não aplicar nenhuma formatação
+	let value = e.target.value;
+
+    // Verifica se o padrão corresponde aos casos especificados
+    const regexSimplePatterns = /^(\d{1,2}|(\d{1,2}:)|(\d{1,2}:\d?))$/;
+
+    if (regexSimplePatterns.test(value)) {
+        // Caso seja um dos padrões simples (1-2 dígitos, com ou sem ":" ou ":" seguido de 1 dígito), não faz nada
         e.target.value = value;
         return;
     }
-    if (value.length > 4) value = value.slice(0, 4);
-    let formatted = '';
-    if (value.length === 3) {
-        // Caso tenha 3 dígitos, formate como "m:ss"
-        formatted = `${value[0]}:${value.slice(1, 3)}`;
-        } else if (value.length === 4) {
-        // Caso tenha 4 dígitos, formate como "mm:ss"
-        formatted = `${value.slice(0, 2)}:${value.slice(2, 4)}`;
+
+    // Caso contrário, aplica o comportamento original para 3 ou 4 dígitos
+    let numericValue = value.replace(/\D/g, ''); // Remove tudo que não é número
+    if (numericValue.length < 3) {
+        e.target.value = numericValue; // Não formata para menos de 3 dígitos
+        return;
     }
-    e.target.value = formatted;
+    if (numericValue.length > 4) numericValue = numericValue.slice(0, 4); // Limita a 4 dígitos
+
+    // Formata para os casos de 3 ou 4 dígitos
+    if (numericValue.length === 3) {
+        e.target.value = `${numericValue[0]}:${numericValue.slice(1, 3)}`; // Formato "m:ss"
+    } else if (numericValue.length === 4) {
+        e.target.value = `${numericValue.slice(0, 2)}:${numericValue.slice(2, 4)}`; // Formato "mm:ss"
+    }
+
+//    let value = e.target.value.replace(/\D/g, '');
+//    if (value.length < 3) {
+//        // Se houver menos de 3 dígitos, não aplicar nenhuma formatação
+//        e.target.value = value;
+//        return;
+//    }
+//    if (value.length > 4) value = value.slice(0, 4);
+//    let formatted = '';
+//    if (value.length === 3) {
+//        // Caso tenha 3 dígitos, formate como "m:ss"
+//        formatted = `${value[0]}:${value.slice(1, 3)}`;
+//        } else if (value.length === 4) {
+//        // Caso tenha 4 dígitos, formate como "mm:ss"
+//        formatted = `${value.slice(0, 2)}:${value.slice(2, 4)}`;
+//    }
+//    e.target.value = formatted;
 }
 
 function maskDecimalInput(e) {
@@ -98,13 +124,13 @@ velocidadeInput.addEventListener('input', (e) => {
 // Botões de Distância Predefinida
 distButtons.forEach(button => {
     button.addEventListener('click', () => {
-        let distancia = parseFloat(button.getAttribute('data-distancia'));
-        if (Number.isInteger(distancia)) {
-            distancia = distancia.toString(); // Sem decimais para inteiros
-        } else {
-            distancia = distancia.toFixed(4).replace('.', ','); // Decimais para valores fracionários
-        }
-        distanciaInput.value = distancia;
+		let distancia = parseFloat(button.getAttribute('data-distancia'));
+		if (Number.isInteger(distancia)) {
+			distancia = distancia.toString(); // Sem decimais para inteiros
+		} else {
+			distancia = distancia.toFixed(4).replace('.', ','); // Decimais para valores fracionários
+		}
+		distanciaInput.value = distancia;
         calculateFromInput('distancia');
     });
 });
@@ -128,43 +154,96 @@ function calculateFromInput(source) {
         if (paceSec) {
             // Preserve o pace e calcule o tempo
             tempoSec = paceSec * distancia;
-            tempoInput.value = secondsToTime(tempoSec);
-            velocidade = (distancia / (tempoSec / 3600)).toFixed(2).replace('.', ',');
-            velocidadeInput.value = velocidade;
+            if (!isNaN(tempoSec)) tempoInput.value = secondsToTime(tempoSec);
+            velocidade = distancia / (tempoSec / 3600);
+            if (!isNaN(velocidade)) velocidadeInput.value = velocidade.toFixed(2).replace('.', ',');
         } else if (tempoSec) {
             // Preserve o tempo e calcule o pace
             paceSec = tempoSec / distancia;
-            paceInput.value = secondsToPace(paceSec);
-            velocidade = (distancia / (tempoSec / 3600)).toFixed(2).replace('.', ',');
-            velocidadeInput.value = velocidade;
+            if (!isNaN(paceSec)) paceInput.value = secondsToPace(paceSec);
+            velocidade = distancia / (tempoSec / 3600);
+            if (!isNaN(velocidade)) velocidadeInput.value = velocidade.toFixed(2).replace('.', ',');
         } else if (velocidade) {
             tempoSec = (distancia / velocidade) * 3600;
-            tempoInput.value = secondsToTime(tempoSec);
+            if (!isNaN(tempoSec)) tempoInput.value = secondsToTime(tempoSec);
             paceSec = tempoSec / distancia;
-            paceInput.value = secondsToPace(paceSec);
+            if (!isNaN(paceSec)) paceInput.value = secondsToPace(paceSec);
         }
-    } 
-    else if (source === 'tempo' && tempoSec !== null && distancia) {
+    } else if (source === 'tempo' && tempoSec !== null && distancia) {
         paceSec = tempoSec / distancia;
-        paceInput.value = secondsToPace(paceSec);
-        velocidade = (distancia / (tempoSec / 3600)).toFixed(2).replace('.', ',');
-        velocidadeInput.value = velocidade;
-    }
-    else if (source === 'pace' && paceSec !== null && distancia) {
+        if (!isNaN(paceSec)) paceInput.value = secondsToPace(paceSec);
+        velocidade = distancia / (tempoSec / 3600);
+        if (!isNaN(velocidade)) velocidadeInput.value = velocidade.toFixed(2).replace('.', ',');
+    } else if (source === 'pace' && paceSec !== null && distancia) {
         tempoSec = paceSec * distancia;
-        tempoInput.value = secondsToTime(tempoSec);
-        velocidade = (distancia / (tempoSec / 3600)).toFixed(2).replace('.', ',');
-        velocidadeInput.value = velocidade;
-    }
-    else if (source === 'velocidade' && velocidade && distancia) {
+        if (!isNaN(tempoSec)) tempoInput.value = secondsToTime(tempoSec);
+        velocidade = distancia / (tempoSec / 3600);
+        if (!isNaN(velocidade)) velocidadeInput.value = velocidade.toFixed(2).replace('.', ',');
+    } else if (source === 'velocidade' && velocidade && distancia) {
         tempoSec = (distancia / velocidade) * 3600;
-        tempoInput.value = secondsToTime(tempoSec);
+        if (!isNaN(tempoSec)) tempoInput.value = secondsToTime(tempoSec);
         paceSec = tempoSec / distancia;
-        paceInput.value = secondsToPace(paceSec);
+        if (!isNaN(paceSec)) paceInput.value = secondsToPace(paceSec);
     }
 
     updating = false;
 }
+
+//function calculateFromInput(source) {
+//    if (updating) return;
+//    updating = true;
+//
+//    let distancia = parseFloat(distanciaInput.value.replace(',', '.'));
+//    let tempo = tempoInput.value;
+//    let pace = paceInput.value;
+//    let velocidade = parseFloat(velocidadeInput.value.replace(',', '.'));
+//
+//    // Conversões para segundos e km/h
+//    let tempoSec = tempo ? timeToSeconds(tempo) : null;
+//    let paceSec = pace ? paceToSeconds(pace) : null;
+//
+//    // Cálculos interdependentes
+//    if (source === 'distancia' && distancia) {
+//        if (paceSec) {
+//            // Preserve o pace e calcule o tempo
+//            tempoSec = paceSec * distancia;
+//            tempoInput.value = secondsToTime(tempoSec);
+//            velocidade = (distancia / (tempoSec / 3600)).toFixed(2).replace('.', ',');
+//            velocidadeInput.value = velocidade;
+//        } else if (tempoSec) {
+//            // Preserve o tempo e calcule o pace
+//            paceSec = tempoSec / distancia;
+//            paceInput.value = secondsToPace(paceSec);
+//            velocidade = (distancia / (tempoSec / 3600)).toFixed(2).replace('.', ',');
+//            velocidadeInput.value = velocidade;
+//        } else if (velocidade) {
+//            tempoSec = (distancia / velocidade) * 3600;
+//            tempoInput.value = secondsToTime(tempoSec);
+//            paceSec = tempoSec / distancia;
+//            paceInput.value = secondsToPace(paceSec);
+//        }
+//    } 
+//    else if (source === 'tempo' && tempoSec !== null && distancia) {
+//        paceSec = tempoSec / distancia;
+//        paceInput.value = secondsToPace(paceSec);
+//        velocidade = (distancia / (tempoSec / 3600)).toFixed(2).replace('.', ',');
+//        velocidadeInput.value = velocidade;
+//    }
+//    else if (source === 'pace' && paceSec !== null && distancia) {
+//        tempoSec = paceSec * distancia;
+//        tempoInput.value = secondsToTime(tempoSec);
+//        velocidade = (distancia / (tempoSec / 3600)).toFixed(2).replace('.', ',');
+//        velocidadeInput.value = velocidade;
+//    }
+//    else if (source === 'velocidade' && velocidade && distancia) {
+//        tempoSec = (distancia / velocidade) * 3600;
+//        tempoInput.value = secondsToTime(tempoSec);
+//        paceSec = tempoSec / distancia;
+//        paceInput.value = secondsToPace(paceSec);
+//    }
+//
+//    updating = false;
+//}
 
 // Validação e Formatação Inicial
 function initialize() {
