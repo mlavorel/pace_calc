@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Pace & Velocidade</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Calculadora de Pace & Velocidade</h1>
+        
+        <!-- Campo de Distância -->
+        <div class="field">
+            <label for="distancia">Distância</label>
+            <div class="distancia-buttons">
+                <button type="button" class="dist-btn" data-distancia="5">5k</button>
+                <button type="button" class="dist-btn" data-distancia="10">10k</button>
+                <button type="button" class="dist-btn" data-distancia="21.0975">Meia Maratona</button>
+                <button type="button" class="dist-btn" data-distancia="42.195">Maratona</button>
+                <button type="button" class="dist-btn" data-distancia="50">50k</button>
+                <button type="button" class="dist-btn" data-distancia="100">100k</button>
+            </div>
+            <input type="text" id="distancia" name="distancia" placeholder="Ex: 15,0000" maxlength="7" />
+        </div>
+
+        <!-- Campo de Tempo -->
+        <div class="field">
+            <label for="tempo">Tempo (hh:mm:ss)</label>
+            <div class="input-group">
+                <input type="text" id="tempo" name="tempo" placeholder="Ex: 1:45:00" maxlength="8" />
+            </div>
+        </div>
+
+        <!-- Campo de Pace -->
+        <div class="field">
+            <label for="pace">Pace (mm:ss/km)</label>
+            <div class="input-group">
+                <input type="text" id="pace" name="pace" placeholder="Ex: 5:00" maxlength="5" />
+            </div>
+        </div>
+
+        <!-- Campo de Velocidade -->
+        <div class="field">
+            <label for="velocidade">Velocidade (km/h)</label>
+            <input type="text" id="velocidade" name="velocidade" placeholder="Ex: 12,17" maxlength="6" />
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
